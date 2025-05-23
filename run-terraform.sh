@@ -130,7 +130,7 @@ fi
 
 # Initialize Terraform
 echo "Initializing Terraform..."
-terraform init
+terraform init -var-file="uservar.tfvars.json"
 
 # Create terraform.tfvars.json if variables provided
 if [ ! -z "$VARIABLES_JSON" ]; then
@@ -142,16 +142,16 @@ fi
 echo "Running Terraform $COMMAND..."
 case "$COMMAND" in
   "plan")
-    terraform plan -out=tfplan
+    terraform plan -out=tfplan -var-file="uservar.tfvars.json"
     ;;
   "apply")
-    terraform apply -auto-approve
+    terraform apply -auto-approve -var-file="uservar.tfvars.json"
     ;;
   "destroy")
-    terraform destroy -auto-approve
+    terraform destroy -auto-approve -var-file="uservar.tfvars.json"
     ;;
   "output")
-    terraform output -json
+    terraform output -json -var-file="uservar.tfvars.json"
     ;;
   *)
     echo "Unknown command: $COMMAND"
