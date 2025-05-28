@@ -94,6 +94,8 @@ esac
 
 echo "Terraform execution completed successfully!"
 
+scp -i /home/terraform/.ssh/server-key.pem $(terraform output --raw private_key_filename) root@3.39.145.60:/root/sshkey
+
 # Clean up
 echo "Cleaning up workspace..."
 cd /home/terraform/projects

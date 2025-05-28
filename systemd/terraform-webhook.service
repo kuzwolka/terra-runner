@@ -1,74 +1,24 @@
 [Unit]
-Description=Project Builder Webhook Server
-After=network-online.target
-Wants=network-online.target
-StartLimitIntervalSec=0
+Description=Terraform Runner Webhook Server
+After=network.target
 
 [Service]
 Type=simple
-User=projectbuilder
-Group=projectbuilder
-WorkingDirectory=/home/projectbuilder
-
-# Main service command
-ExecStart=/usr/bin/python3 /opt/project-builder/webhook-server.py
-ExecReload=/bin/kill -HUP $MAINPID
-
-# Pre-start checks
-ExecStartPre=/bin/mkdir -p /home/projectbuilder/logs
-ExecStartPre=/bin/mkdir -p /home/projectbuilder/projects
-ExecStartPre=/bin/chown -R projectbuilder:projectbuilder /home/projectbuilder/logs
-ExecStartPre=/bin/chown -R projectbuilder:projectbuilder /home/projectbuilder/projects
-
-# Restart configuration
+User=terraform
+Group=terraform
+WorkingDirectory=/opt/terraform-runner
+ExecStart=/usr/bin/python3 /opt/terraform-runner/webhook-server.py
 Restart=always
 RestartSec=10
-StartLimitBurst=5
 
 # Environment variables
 Environment=PATH=/usr/local/bin:/usr/bin:/bin
-Environment=PYTHONUNBUFFERED=1
-Environment=PYTHONPATH=/opt/project-builder
 EnvironmentFile=-/etc/environment
-EnvironmentFile=-/etc/project-builder/environment
-
-# Security settings
-NoNewPrivileges=true
-PrivateTmp=true
-ProtectSystem=strict
-ProtectHome=true
-ReadWritePaths=/home/projectbuilder /home/templates /tmp /var/log
-ProtectKernelTunables=true
-ProtectKernelModules=true
-ProtectControlGroups=true
-MemoryDenyWriteExecute=false
-RestrictRealtime=true
-RestrictSUIDSGID=true
-LockPersonality=true
-ProtectHostname=true
-
-# Resource limits
-LimitNOFILE=65536
-LimitNPROC=4096
-LimitCORE=0
-MemoryMax=1G
-CPUQuota=150%
 
 # Logging
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=project-builder-webhook
-SyslogLevel=info
-
-# Health check
-WatchdogSec=300
-NotifyAccess=all
-
-# Cleanup
-KillMode=mixed
-KillSignal=SIGTERM
-TimeoutStopSec=30
-FinalKillSignal=SIGKILL
+SyslogIdentifier=terraform-runner-webhook
 
 [Install]
 WantedBy=multi-user.target
